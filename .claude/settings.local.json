@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(git -C C:\\\\Users\\\\Msonero\\\\cleanfeed status)",
-      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\Msonero\\\\cleanfeed\" -Force | ForEach-Object { $_.FullName })",
-      "PowerShell(gh --version 2>&1)"
-    ]
-  }
-}
