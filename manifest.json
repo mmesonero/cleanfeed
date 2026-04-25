@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "CleanFeed",
   "version": "2.0",
-  "description": "Limpia YouTube (Shorts/feed) y X/Twitter (Para ti, panel, sidebar).",
+  "description": "Remove distractions across YouTube, X, Instagram and TikTok. Toggle per-platform filters or hard-block entire sites.",
   "permissions": ["tabs", "storage", "declarativeNetRequest"],
   "host_permissions": [
     "*://*.youtube.com/*",
@@ -13,46 +13,52 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["block.html", "block.js", "shared.js", "logo.png"],
-      "matches": ["<all_urls>"]
+      "resources": ["ui/block.html", "ui/block.js", "shared.js", "assets/logo.png"],
+      "matches": [
+        "*://*.youtube.com/*",
+        "*://*.x.com/*",
+        "*://*.twitter.com/*",
+        "*://*.instagram.com/*",
+        "*://*.tiktok.com/*"
+      ]
     }
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "ui/popup.html",
     "default_title": "CleanFeed",
-    "default_icon": "logo.png"
+    "default_icon": "assets/logo.png"
   },
   "icons": {
-    "128": "logo.png"
+    "128": "assets/logo.png"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["video.js"],
+      "js": ["content/video.js"],
       "run_at": "document_idle"
     },
     {
       "matches": ["*://*.youtube.com/*"],
-      "css": ["hide.css"],
-      "js": ["content.js", "youtube.js"],
+      "css": ["content/hide.css"],
+      "js": ["content/content.js", "content/youtube.js"],
       "run_at": "document_start"
     },
     {
       "matches": ["*://*.x.com/*", "*://*.twitter.com/*"],
-      "js": ["twitter.js"],
+      "js": ["content/twitter.js"],
       "run_at": "document_idle"
     },
     {
       "matches": ["*://*.instagram.com/*"],
-      "js": ["instagram.js"],
+      "js": ["content/instagram.js"],
       "run_at": "document_start"
     },
     {
       "matches": ["*://*.tiktok.com/*"],
-      "js": ["tiktok.js"],
+      "js": ["content/tiktok.js"],
       "run_at": "document_start"
     }
   ]

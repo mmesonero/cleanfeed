@@ -16,7 +16,7 @@ const {
 } = window.CleanFeedShared;
 
 function openDashboard() {
-  chrome.tabs.create({ url: chrome.runtime.getURL('dashboard.html') });
+  chrome.tabs.create({ url: chrome.runtime.getURL('ui/dashboard.html') });
 }
 
 function activeCount(settings, platform) {
@@ -96,8 +96,8 @@ function renderGeneral(settings) {
 
   const rows = videoPlatform.settings.map(setting => `
     <div class="setting-row">
-      <div class="setting-copy">
-        <strong class="setting-name">${setting.name}</strong>
+      <div class="setting-copy${setting.dashboardLink ? ' setting-copy-link' : ''}" ${setting.dashboardLink ? 'data-open-dashboard' : ''}>
+        <strong class="setting-name">${setting.name}${setting.dashboardLink ? ' <span class="setting-link-arrow">↗</span>' : ''}</strong>
         <span class="setting-desc">${setting.description}</span>
       </div>
       <label class="switch">
@@ -117,6 +117,9 @@ function renderGeneral(settings) {
   `;
 
   document.getElementById('open-dashboard').addEventListener('click', openDashboard);
+  section.querySelectorAll('[data-open-dashboard]').forEach(el => {
+    el.addEventListener('click', openDashboard);
+  });
 
   videoPlatform.settings.forEach(setting => {
     const el = document.getElementById(`gen-${setting.id}`);
@@ -132,7 +135,6 @@ function renderGeneral(settings) {
 async function updateHeaderMeta(settings) {
   const timeSpent = await getTimeSpent();
 
-  // Count only boolean toggle settings from platform cards + videoSpeedEnabled
   let enabled = 0, total = 0;
   PLATFORMS.forEach(p => {
     p.settings.forEach(s => {
@@ -140,12 +142,12 @@ async function updateHeaderMeta(settings) {
       if (settings[s.id]) enabled++;
     });
   });
-  total++;
-  if (settings.videoSpeedEnabled) enabled++;
 
-  // Exclude YouTube — content.js tracks all YT watching, not just "lost" time
+  // Only count vertical/short-form content: Shorts, Reels, TikTok.
+  // Exclude full YouTube sessions and X (not vertical content).
+  const VERTICAL_KEYS = new Set(['youtubeShorts', 'instagram', 'tiktok']);
   const socialMs = Object.entries(timeSpent)
-    .filter(([k]) => k !== 'youtube')
+    .filter(([k]) => VERTICAL_KEYS.has(k))
     .reduce((s, [, ms]) => s + (ms || 0), 0);
   const timePart = socialMs >= 60000 ? ` · ${formatTime(socialMs)} lost` : '';
 
@@ -207,4 +209,7 @@ async function init() {
   await refresh();
 }
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+  document.getElementById('config-btn').addEventListener('click', openDashboard);
+});

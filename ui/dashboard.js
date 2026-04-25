@@ -11,6 +11,8 @@ const {
   getPlatformOrder,
   setPlatformOrder,
   getOrderedPlatforms,
+  getTimeSpent,
+  formatTime,
 } = window.CleanFeedShared;
 
 function statCard(value, label) {
@@ -22,16 +24,8 @@ function statCard(value, label) {
   `;
 }
 
-function estimateTime(minutes) {
-  if (minutes >= 60) {
-    const hours = Math.floor(minutes / 60);
-    const remaining = minutes % 60;
-    return remaining ? `${hours}h ${remaining}m` : `${hours}h`;
-  }
-  return `${minutes}m`;
-}
 
-function renderStats(settings, metrics, toolLocks) {
+async function renderStats(settings, metrics, toolLocks) {
   const summary = globalSummary(metrics);
 
   // Count all platform settings; locked platform = all its settings count as active
@@ -44,11 +38,14 @@ function renderStats(settings, metrics, toolLocks) {
       if (isLocked || !!settings[setting.id]) enabled++;
     });
   });
-  // videoSpeedEnabled lives outside PLATFORMS
-  total++;
-  if (settings.videoSpeedEnabled) enabled++;
 
-  const timeLostTotal = estimateTime(summary.bypassesTotal * 2);
+  // Real tracked time: Shorts + X + Instagram + TikTok (excludes full YouTube sessions)
+  const timeSpent = await getTimeSpent();
+  const TRACKED_KEYS = new Set(['youtubeShorts', 'x', 'instagram', 'tiktok']);
+  const totalMs = Object.entries(timeSpent)
+    .filter(([k]) => TRACKED_KEYS.has(k))
+    .reduce((s, [, ms]) => s + (ms || 0), 0);
+  const timeLostTotal = totalMs >= 60000 ? formatTime(totalMs) : '< 1m';
 
   document.getElementById("stats-grid").innerHTML = [
     statCard(`${enabled}/${total}`, "rules active"),
@@ -267,7 +264,7 @@ async function refreshDashboard() {
     getPlatformOrder(),
   ]);
   const orderedPlatforms = getOrderedPlatforms(PLATFORMS, order);
-  renderStats(settings, metrics, toolLocks);
+  await renderStats(settings, metrics, toolLocks);
   renderControls(settings, toolLocks, orderedPlatforms);
   renderVideoSection(settings);
   bindDashboardToggles();

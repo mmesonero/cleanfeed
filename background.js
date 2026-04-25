@@ -1,8 +1,8 @@
 const RULES = {
-  instagram: { block: 20, bypass: 21, filter: "||instagram.com", bypassFilter: "||instagram.com*bypass=true", path: "/block.html?site=instagram" },
-  youtube:   { block: 22, bypass: 23, filter: "||youtube.com",   bypassFilter: "||youtube.com*bypass=true",   path: "/block.html?site=youtube"   },
-  x:         { block: 24, bypass: 25, filter: "||x.com",         bypassFilter: "||x.com*bypass=true",         path: "/block.html?site=x"         },
-  tiktok:    { block: 26, bypass: 27, filter: "||tiktok.com",    bypassFilter: "||tiktok.com*bypass=true",    path: "/block.html?site=tiktok"    },
+  instagram: { block: 20, bypass: 21, filter: "||instagram.com", bypassFilter: "||instagram.com*bypass=true", path: "/ui/block.html?site=instagram" },
+  youtube:   { block: 22, bypass: 23, filter: "||youtube.com",   bypassFilter: "||youtube.com*bypass=true",   path: "/ui/block.html?site=youtube"   },
+  x:         { block: 24, bypass: 25, filter: "||x.com",         bypassFilter: "||x.com*bypass=true",         path: "/ui/block.html?site=x"         },
+  tiktok:    { block: 26, bypass: 27, filter: "||tiktok.com",    bypassFilter: "||tiktok.com*bypass=true",    path: "/ui/block.html?site=tiktok"    },
 };
 
 const TOOL_LOCKS_KEY = "toolLocks";

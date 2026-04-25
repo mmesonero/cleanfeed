@@ -26,6 +26,29 @@
       border-bottom: 1px solid #1e1e1e;
     }
 
+    .config-btn {
+      background: transparent;
+      border: 1px solid #252525;
+      border-radius: 6px;
+      color: #4a4540;
+      cursor: pointer;
+      font: inherit;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      padding: 4px 9px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .config-btn:hover {
+      color: #C9A96E;
+      border-color: rgba(201,169,110,0.35);
+      background: rgba(201,169,110,0.05);
+    }
+
     .header-logo {
       width: 28px;
       height: 28px;
@@ -285,25 +308,43 @@
       border-color: rgba(201,169,110,0.4);
       background: rgba(201,169,110,0.05);
     }
+
+    .setting-copy-link {
+      cursor: pointer;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+
+    .setting-copy-link:hover .setting-name { color: #C9A96E; }
+    .setting-copy-link:hover .setting-desc { color: #666; }
+
+    .setting-link-arrow {
+      font-size: 10px;
+      color: #444;
+      margin-left: 3px;
+      vertical-align: middle;
+    }
+
+    .setting-copy-link:hover .setting-link-arrow { color: #C9A96E; }
   </style>
 </head>
 <body>
   <div class="header">
     <div class="header-logo">
-      <img src="logo.png" alt="CleanFeed" />
+      <img src="../assets/logo.png" alt="CleanFeed" />
     </div>
     <div class="header-text">
       <h1>CleanFeed</h1>
       <div class="header-meta" id="header-meta">Loading…</div>
     </div>
-    <div class="status-dot"></div>
+    <button class="config-btn" id="config-btn">Configuration</button>
   </div>
 
   <div class="platform-list" id="platform-list"></div>
 
   <div class="general-section" id="general-section"></div>
 
-  <script src="shared.js"></script>
+  <script src="../shared.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

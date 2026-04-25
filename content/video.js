@@ -6,7 +6,7 @@
   window.__cfVideoLoaded = true;
 
   const isYT = location.hostname.includes('youtube.com');
-  let cfg = { videoSpeedEnabled: true, ytSubtitlesOff: false, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25 };
+  let cfg = { videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25 };
   let subsOffManualEnabled = false;
   let lastUrl = location.href;
 
@@ -169,7 +169,7 @@
       style: css({ position: 'absolute', left: '0', height: '3px', background: GOLD, borderRadius: '999px', width: '0%' }),
     });
     const thumb = el('img', {
-      src: chrome.runtime.getURL('logo.png'),
+      src: chrome.runtime.getURL('assets/logo.png'),
       style: css({ position: 'absolute', width: '22px', height: '22px', transform: 'translate(-50%,-50%)', top: '50%', left: '0%', cursor: 'grab', display: 'block', objectFit: 'contain', filter: 'drop-shadow(0 1px 4px rgba(0,0,0,0.9))' }),
     });
     trackWrap.append(trackBg, trackFill, thumb);
@@ -579,9 +579,8 @@
 
   // ── Storage ────────────────────────────────────────────────────────────────
 
-  chrome.storage.sync.get({ videoSpeedEnabled: true, ytSubtitlesOff: false, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25 }, (s) => {
+  chrome.storage.sync.get({ videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25 }, (s) => {
     cfg.videoSpeedEnabled  = s.videoSpeedEnabled;
-    cfg.ytSubtitlesOff     = s.ytSubtitlesOff;
     cfg.subsOff            = s.subsOff;
     cfg.videoSpeedKeyInc   = s.videoSpeedKeyInc;
     cfg.videoSpeedKeyDec   = s.videoSpeedKeyDec;
@@ -595,10 +594,6 @@
     if ('videoSpeedKeyInc'  in changes) cfg.videoSpeedKeyInc  = changes.videoSpeedKeyInc.newValue;
     if ('videoSpeedKeyDec'  in changes) cfg.videoSpeedKeyDec  = changes.videoSpeedKeyDec.newValue;
     if ('videoSpeedStep'    in changes) cfg.videoSpeedStep    = changes.videoSpeedStep.newValue;
-    if ('ytSubtitlesOff' in changes) {
-      cfg.ytSubtitlesOff = changes.ytSubtitlesOff.newValue;
-      if (cfg.ytSubtitlesOff) disableSubs();
-    }
     if ('subsOff' in changes) {
       cfg.subsOff = changes.subsOff.newValue;
       if (cfg.subsOff) disableSubs();

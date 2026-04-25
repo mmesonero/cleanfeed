@@ -94,7 +94,6 @@
   // ── Handle features ────────────────────────────────────────────────────
 
   function applyYouTubeFeatures() {
-    maybeRedirect();
     removeVideoRecommendations();
     removeComments();
 
@@ -130,9 +129,6 @@
     applyYouTubeFeatures();
   };
 
-  document.addEventListener('DOMContentLoaded', startObserver);
-  
-  // Also start observer immediately if DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', startObserver);
   } else {
@@ -147,6 +143,7 @@
       cfg.ytRemoveRecommendations = s.ytRemoveRecommendations;
       cfg.ytRemoveComments = s.ytRemoveComments;
       cfg.ytRedirectToSubs = s.ytRedirectToSubs;
+      maybeRedirect();
       applyYouTubeFeatures();
     }
   );

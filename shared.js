@@ -7,7 +7,6 @@
     subsOff: false,
     hideShorts: true,
     ytHideMetrics: false,
-    ytSubtitlesOff: false,
     ytRemoveRecommendations: false,
     ytRemoveComments: false,
     ytRedirectToSubs: false,
@@ -28,27 +27,28 @@
     {
       id: "video",
       label: "Video",
-      icon: "logo.png",
+      icon: "../assets/logo.png",
       settings: [
-        { id: "subsOff", name: "Subtitles always off", description: "Auto-disables subtitles on any site (YouTube, Crunchyroll, Twitch…)" },
+        { id: "subsOff", name: "Subtitles always off", description: "Auto-disables subtitles on any site" },
+        { id: "videoSpeedEnabled", name: "Video speed keys", description: "Keyboard shortcuts to control playback speed", dashboardLink: true },
       ],
     },
     {
       id: "youtube",
       label: "YouTube",
-      icon: "youtube.png",
+      icon: "../assets/youtube.png",
       settings: [
         { id: "hideShorts", name: "Hide Shorts", description: "Removes Shorts from feed, search and sidebar" },
+        { id: "ytRedirectToSubs", name: "Redirect to Subscriptions", description: "Opens Subscriptions instead of the homepage" },
         { id: "ytRemoveRecommendations", name: "Remove recommendations", description: "Hides the sidebar while watching a video" },
         { id: "ytRemoveComments", name: "Remove comments", description: "Hides the comments section" },
         { id: "ytHideMetrics", name: "Hide metrics", description: "Hides views, likes and subscriber counts" },
-        { id: "ytRedirectToSubs", name: "Redirect to Subscriptions", description: "Always opens Subscriptions instead of the recommendation feed" },
       ],
     },
     {
       id: "x",
       label: "X",
-      icon: "x.jpg",
+      icon: "../assets/x.jpg",
       settings: [
         { id: "xHideParaTi", name: 'Remove "For You"', description: "Opens the Following tab by default" },
         { id: "xCleanSidebar", name: "Clean sidebar", description: "Hides Explore, Communities and Premium links" },
@@ -59,7 +59,7 @@
     {
       id: "instagram",
       label: "Instagram",
-      icon: "instagram.png",
+      icon: "../assets/instagram.png",
       settings: [
         { id: "hideReels", name: "Hide Reels", description: "Removes Reels from the app" },
         { id: "igOnlyFollowing", name: "Only accounts I follow", description: "Filters feed to followed accounts only" },
@@ -69,7 +69,7 @@
     {
       id: "tiktok",
       label: "TikTok",
-      icon: "tiktok.jpg",
+      icon: "../assets/tiktok.jpg",
       settings: [
         { id: "ttHideMetrics", name: "Hide metrics", description: "Hides likes, saves and share counts" },
       ],
@@ -83,7 +83,7 @@
 
   const METRICS_KEY = "cleanfeedMetrics";
   const TIME_SPENT_KEY = "cleanfeedTime";
-  const TIME_DEFAULTS = { youtube: 0, x: 0, instagram: 0, tiktok: 0 };
+  const TIME_DEFAULTS = { youtube: 0, youtubeShorts: 0, x: 0, instagram: 0, tiktok: 0 };
   const PLATFORM_ORDER_KEY = "platformOrder";
 
   function pad(number) {

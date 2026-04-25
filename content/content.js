@@ -1,29 +1,46 @@
 // CleanFeed — YouTube
 // Objetivo: eliminar únicamente Shorts. El resto de YouTube queda intacto.
 
-// ── Time tracking ─────────────────────────────────────────────────────────
+// ── Time tracking (Shorts only) ───────────────────────────────────────────
 (function () {
   const CF_TIME_KEY = 'cleanfeedTime';
-  let start = document.hidden ? null : Date.now();
+  let start = null;
+
+  function onShorts() {
+    return location.pathname.startsWith('/shorts/');
+  }
+
+  function save(ms) {
+    const storageLocal = chrome?.storage?.local;
+    if (!storageLocal?.get) return;
+    storageLocal.get({ [CF_TIME_KEY]: {} }, (data) => {
+      const t = { ...(data[CF_TIME_KEY] || {}) };
+      t.youtubeShorts = (t.youtubeShorts || 0) + ms;
+      storageLocal.set({ [CF_TIME_KEY]: t });
+    });
+  }
 
   function flush() {
     if (!start) return;
     const ms = Date.now() - start;
     start = null;
-    if (ms < 1000) return;
-    const storageLocal = chrome?.storage?.local;
-    if (!storageLocal?.get) return;
-    storageLocal.get({ [CF_TIME_KEY]: {} }, (data) => {
-      const t = { ...(data[CF_TIME_KEY] || {}) };
-      t.youtube = (t.youtube || 0) + ms;
-      storageLocal.set({ [CF_TIME_KEY]: t });
-    });
+    if (ms >= 1000) save(ms);
   }
 
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) { flush(); } else { start = Date.now(); }
-  });
+  // Single sync function: start tracking if on Shorts and visible, stop otherwise.
+  function sync() {
+    if (document.hidden || !onShorts()) {
+      flush();
+    } else if (!start) {
+      start = Date.now();
+    }
+  }
+
+  document.addEventListener('visibilitychange', sync);
+  window.addEventListener('yt-navigate-finish', sync);
   window.addEventListener('beforeunload', flush);
+
+  sync();
 })();
 
 // Añadir cf-shorts en document_start activa las reglas CSS de hide.css
