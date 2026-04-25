@@ -1,0 +1,74 @@
+/* Activado cuando <html> tiene la clase cf-shorts */
+html.cf-shorts yt-chip-cloud-chip-renderer[aria-label="Shorts"],
+html.cf-shorts yt-chip-cloud-chip-renderer[title="Shorts"] { display: none !important; }
+
+html.cf-shorts ytd-guide-entry-renderer:has(a[href*="/shorts"]),
+html.cf-shorts ytd-guide-entry-renderer:has(a[title="Shorts"]),
+html.cf-shorts ytd-mini-guide-entry-renderer:has(a[href*="/shorts"]),
+html.cf-shorts ytd-mini-guide-entry-renderer:has(a[title="Shorts"]) {
+  display: none !important;
+}
+
+html.cf-shorts grid-shelf-view-model,
+html.cf-shorts .ytGridShelfViewModelHost,
+html.cf-shorts ytd-reel-shelf-renderer,
+html.cf-shorts ytd-rich-shelf-renderer[is-shorts],
+html.cf-shorts ytd-rich-shelf-renderer:has(ytd-reel-item-renderer),
+html.cf-shorts ytd-shelf-renderer:has(ytd-reel-item-renderer),
+html.cf-shorts ytd-shorts,
+html.cf-shorts ytd-reel-item-renderer {
+  display: none !important;
+}
+
+html.cf-shorts ytd-item-section-renderer:has(ytd-reel-shelf-renderer),
+html.cf-shorts ytd-item-section-renderer:has(ytd-reel-item-renderer),
+html.cf-shorts ytd-item-section-renderer:has(ytd-rich-shelf-renderer:has(ytd-reel-item-renderer)),
+html.cf-shorts ytd-item-section-renderer:has(grid-shelf-view-model),
+html.cf-shorts ytd-item-section-renderer:has(.ytGridShelfViewModelHost),
+html.cf-shorts ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+html.cf-shorts ytd-rich-section-renderer:has(ytd-reel-item-renderer),
+html.cf-shorts ytd-rich-section-renderer:has(ytd-rich-shelf-renderer:has(ytd-reel-item-renderer)),
+html.cf-shorts ytd-rich-section-renderer:has(grid-shelf-view-model),
+html.cf-shorts ytd-rich-section-renderer:has(.ytGridShelfViewModelHost) {
+  display: none !important;
+}
+
+/* Activado cuando <html> tiene la clase cf-yt-metrics */
+html.cf-yt-metrics ytd-video-view-count-renderer,
+html.cf-yt-metrics #view-count { display: none !important; }
+html.cf-yt-metrics yt-formatted-string#info.ytd-watch-info-text span:not(:last-child) { display: none !important; }
+html.cf-yt-metrics like-button-view-model .yt-spec-button-shape-next__button-text-content,
+html.cf-yt-metrics dislike-button-view-model .yt-spec-button-shape-next__button-text-content { display: none !important; }
+html.cf-yt-metrics #owner-sub-count { display: none !important; }
+
+/* Center metrics container when some are hidden */
+html.cf-yt-metrics #info-strings {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+html.cf-shorts ytd-rich-item-renderer:has(a[href*="/shorts/"]),
+html.cf-shorts ytd-video-renderer:has(a[href*="/shorts/"]),
+html.cf-shorts ytd-compact-video-renderer:has(a[href*="/shorts/"]),
+html.cf-shorts ytd-grid-video-renderer:has(a[href*="/shorts/"]) {
+  display: none !important;
+}
+
+/* Hide recommendations when watching videos */
+html.cf-yt-remove-recommendations ytd-watch-next-secondary-results-renderer,
+html.cf-yt-remove-recommendations ytd-watch-next-results,
+html.cf-yt-remove-recommendations ytd-secondary-results,
+html.cf-yt-remove-recommendations #secondary,
+html.cf-yt-remove-recommendations ytd-endscreen-renderer,
+html.cf-yt-remove-recommendations .ytp-endscreen-container {
+  display: none !important;
+}
+
+/* Hide comments section */
+html.cf-yt-remove-comments ytd-comments,
+html.cf-yt-remove-comments ytd-comments-section-renderer,
+html.cf-yt-remove-comments ytd-comment-view-model,
+html.cf-yt-remove-comments yt-comment-thread-renderer {
+  display: none !important;
+}

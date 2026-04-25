@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Site blocked &middot; CleanFeed</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #0D0D0D;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #e0e0e0;
+      padding: 24px;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .icon-ring {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #C9A96E;
+      background: #161616;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 24px #C9A96E22;
+      margin-bottom: 4px;
+    }
+
+    .icon-ring img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      filter: sepia(1) saturate(2) hue-rotate(5deg) brightness(0.9);
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #C9A96E;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.6;
+    }
+
+    .subtitle em {
+      color: #C9A96E;
+      font-style: normal;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 5px 14px;
+      border-radius: 99px;
+      border: 1px solid #2a2a2a;
+      background: #161616;
+      font-size: 12px;
+      color: #555;
+      letter-spacing: 0.5px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+
+    .stat-card {
+      border: 1px solid #222;
+      background: #131313;
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-align: left;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #C9A96E;
+      letter-spacing: -0.3px;
+    }
+
+    .stat-label {
+      margin-top: 4px;
+      font-size: 10px;
+      color: #555;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      letter-spacing: 0.2px;
+    }
+
+    #go-back {
+      background: transparent;
+      border: 1.5px solid #C9A96E88;
+      color: #C9A96E;
+    }
+
+    #go-back:hover { background: #C9A96E11; }
+
+    #bypass {
+      background: #1a1a1a;
+      border: 1.5px solid #2a2a2a;
+      color: #555;
+    }
+
+    #bypass:hover {
+      background: #222;
+      color: #888;
+    }
+
+    .footer {
+      font-size: 11px;
+      color: #2e2e2e;
+      margin-top: 8px;
+    }
+
+    .menu-hint {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      color: #2e2e2e;
+      font-size: 18px;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+  <span class="menu-hint">&middot;&middot;&middot;</span>
+
+  <div class="container">
+    <div class="icon-ring">
+      <img src="logo.png" alt="CleanFeed" />
+    </div>
+
+    <h1>Site blocked</h1>
+
+    <p class="subtitle">
+      You decided not to go here.<br>
+      <em>Your attention is worth more than this.</em>
+    </p>
+
+    <div class="pill" id="blocked-domain">tiktok.com</div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-value" id="blocks-last-7d">0</div>
+        <div class="stat-label">Blocks (Last 7d)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="bypasses-last-7d">0</div>
+        <div class="stat-label">Bypasses (Last 7d)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="time-spent">—</div>
+        <div class="stat-label">Time Spent (Total)</div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button id="go-back">&larr; Go back</button>
+      <button id="bypass">Continue anyway</button>
+    </div>
+
+    <p class="footer">CleanFeed &middot; you can disable this from the popup or dashboard</p>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="block.js"></script>
+</body>
+</html>

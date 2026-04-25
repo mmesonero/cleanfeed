@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      width: 348px;
+      background: #111111;
+      color: #e8e8e8;
+      user-select: none;
+    }
+
+    button, input { font: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Header ── */
+    .header {
+      background: #0D0D0D;
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    .header-logo {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .header-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .header-text { flex: 1; }
+
+    .header-text h1 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f0f0f0;
+      letter-spacing: 0.1px;
+    }
+
+    .header-meta {
+      font-size: 10.5px;
+      color: #555;
+      margin-top: 1px;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #4CAF50;
+      box-shadow: 0 0 5px #4CAF5088;
+      flex-shrink: 0;
+    }
+
+    /* ── Platform list ── */
+    .platform-list {
+      overflow-y: auto;
+    }
+
+    .platform {
+      border-bottom: 1px solid #181818;
+      position: relative;
+      transition: box-shadow 0.12s;
+    }
+
+    .platform-head {
+      display: flex;
+      align-items: stretch;
+      background: #121214;
+      transition: background 0.15s;
+    }
+
+    .platform-head:hover { background: #17181b; }
+
+    .platform-toggle {
+      flex: 1;
+      background: transparent;
+      border: 0;
+      color: inherit;
+      cursor: default;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px 9px;
+      text-align: left;
+    }
+
+    .platform-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
+      object-fit: cover;
+      background: #0f0f10;
+      padding: 1px;
+    }
+
+    .platform-icon.platform-youtube {
+      object-fit: contain;
+      padding: 0;
+      border-radius: 3px;
+    }
+
+    .platform-name {
+      flex: 1;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.3px;
+      color: #6d675f;
+      text-transform: uppercase;
+    }
+
+    .platform-count {
+      font-size: 10px;
+      color: #8a8379;
+      letter-spacing: 0.3px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid #2a2a2d;
+      background: #18191c;
+    }
+
+    .lock-btn {
+      background: transparent;
+      border: 0;
+      border-left: 1px solid #1e1e1e;
+      color: #3d3935;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0 11px;
+      flex-shrink: 0;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .lock-btn:hover { color: #C9A96E; background: rgba(201,169,110,0.06); }
+    .lock-btn.lock-btn-active { color: #C9A96E; }
+    .lock-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+
+    /* ── Settings ── */
+    .setting-list { display: block; }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 16px;
+      border-bottom: 1px solid #161616;
+      transition: background 0.15s;
+    }
+
+    .setting-row:hover { background: #161616; }
+
+    .setting-copy { flex: 1; min-width: 0; }
+
+    .setting-name {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #ddd;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .setting-desc {
+      display: block;
+      margin-top: 1px;
+      font-size: 10.5px;
+      color: #484848;
+    }
+
+    .switch {
+      position: relative;
+      width: 36px;
+      min-width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .switch input:disabled + .slider { opacity: 0.4; cursor: not-allowed; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      cursor: pointer;
+      background: #242424;
+      border: 1px solid #2e2e2e;
+      border-radius: 20px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      left: 2px;
+      top: 2px;
+      border-radius: 50%;
+      background: #484848;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .switch input:checked + .slider {
+      background: #C9A96E22;
+      border-color: #C9A96E77;
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(16px);
+      background: #C9A96E;
+    }
+
+    /* ── General footer section ── */
+    .general-section {
+      border-top: 1px solid #222;
+      background: #0e0e10;
+    }
+
+    .general-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px 8px;
+      border-bottom: 1px solid #181818;
+    }
+
+    .general-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .general-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .general-name {
+      flex: 1;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.3px;
+      color: #6d675f;
+      text-transform: uppercase;
+    }
+
+    .dashboard-btn {
+      background: transparent;
+      border: 1px solid #2a2a2d;
+      border-radius: 6px;
+      color: #6a655f;
+      cursor: pointer;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      padding: 4px 10px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+
+    .dashboard-btn:hover {
+      color: #C9A96E;
+      border-color: rgba(201,169,110,0.4);
+      background: rgba(201,169,110,0.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-logo">
+      <img src="logo.png" alt="CleanFeed" />
+    </div>
+    <div class="header-text">
+      <h1>CleanFeed</h1>
+      <div class="header-meta" id="header-meta">Loading…</div>
+    </div>
+    <div class="status-dot"></div>
+  </div>
+
+  <div class="platform-list" id="platform-list"></div>
+
+  <div class="general-section" id="general-section"></div>
+
+  <script src="shared.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
