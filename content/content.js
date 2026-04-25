@@ -11,13 +11,15 @@
   }
 
   function save(ms) {
-    const storageLocal = chrome?.storage?.local;
-    if (!storageLocal?.get) return;
-    storageLocal.get({ [CF_TIME_KEY]: {} }, (data) => {
-      const t = { ...(data[CF_TIME_KEY] || {}) };
-      t.youtubeShorts = (t.youtubeShorts || 0) + ms;
-      storageLocal.set({ [CF_TIME_KEY]: t });
-    });
+    try {
+      const storageLocal = chrome?.storage?.local;
+      if (!storageLocal?.get) return;
+      storageLocal.get({ [CF_TIME_KEY]: {} }, (data) => {
+        const t = { ...(data[CF_TIME_KEY] || {}) };
+        t.youtubeShorts = (t.youtubeShorts || 0) + ms;
+        storageLocal.set({ [CF_TIME_KEY]: t });
+      });
+    } catch (_) {}
   }
 
   function flush() {
