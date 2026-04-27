@@ -24,6 +24,14 @@
   // ── Build HUD ──────────────────────────────────────────────────────────────
 
   function buildHUD(video) {
+    // Remove any site-imposed cap on playbackRate (YT/Prime use defineProperty)
+    try {
+      const proto = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'playbackRate');
+      Object.defineProperty(video, 'playbackRate', {
+        get: proto.get, set: proto.set, configurable: true, enumerable: true,
+      });
+    } catch (_) { /* non-configurable — site wins at the property level */ }
+
     let savedRate   = video.playbackRate || 1;
     let settingRate = false;
     let guardTimer  = null;
@@ -276,7 +284,7 @@
       settingRate = false;
       // Guard window: fight back if the site resets our rate within 800ms
       clearTimeout(guardTimer);
-      guardTimer = setTimeout(() => { guardTimer = null; }, 800);
+      guardTimer = setTimeout(() => { guardTimer = null; }, 3000);
       update();
     }
 
@@ -330,7 +338,7 @@
 
     video.addEventListener('play', () => {
       if (Math.abs(video.playbackRate - savedRate) > 0.001) {
-        video.playbackRate = savedRate;
+        applyRate(savedRate);
       }
     });
 
