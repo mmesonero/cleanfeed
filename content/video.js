@@ -277,14 +277,26 @@
     }
 
     // ── Apply rate (preserves across pause) ──────────────────────────────────
+    let enforceInterval = null;
+
     function applyRate(rate) {
       savedRate = rate;
       settingRate = true;
       video.playbackRate = rate;
       settingRate = false;
-      // Guard window: fight back if the site resets our rate within 800ms
       clearTimeout(guardTimer);
       guardTimer = setTimeout(() => { guardTimer = null; }, 3000);
+      // For speeds the site tends to cap, poll every 200ms and re-apply
+      clearInterval(enforceInterval);
+      if (rate > 2) {
+        enforceInterval = setInterval(() => {
+          if (Math.abs(video.playbackRate - savedRate) > 0.01) {
+            settingRate = true;
+            video.playbackRate = savedRate;
+            settingRate = false;
+          }
+        }, 200);
+      }
       update();
     }
 
@@ -304,7 +316,7 @@
     }
 
     function tick() {
-      if (!document.contains(video)) { wrap.remove(); return; }
+      if (!document.contains(video)) { wrap.remove(); clearInterval(enforceInterval); return; }
       const fsRoot = getFullscreenRoot();
       const targetParent = fsRoot && (fsRoot === video || fsRoot.contains(video)) ? fsRoot : document.body;
       if (wrap.parentNode !== targetParent) targetParent.appendChild(wrap);
