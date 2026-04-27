@@ -10,7 +10,7 @@
   let subsOffManualEnabled = false;
   let lastUrl = location.href;
 
-  const PRESETS  = [1.25, 1.5];
+  const PRESETS  = [1, 2, 4, 6, 10];
   const GOLD     = '#d4b062';
   const GOLD_DIM = 'rgba(212,176,98,0.15)';
   const INK      = 'rgba(8,8,10,0.22)';
@@ -151,7 +151,7 @@
 
     // Slider row — [−] track [+]
     const SLIDER_MIN = 0.25;
-    const SLIDER_MAX = 4;
+    const SLIDER_MAX = 10;
 
     const sliderRow = el('div', {
       style: css({ display: 'flex', alignItems: 'center', gap: '8px' }),
@@ -373,7 +373,7 @@
   }
 
   function round(n) { return Math.round(n * 100) / 100; }
-  function clamp(n) { return Math.min(4, Math.max(0.25, n)); }
+  function clamp(n) { return Math.min(10, Math.max(0.25, n)); }
 
   // ── Speed setter ───────────────────────────────────────────────────────────
 
