@@ -14,13 +14,7 @@
   "web_accessible_resources": [
     {
       "resources": ["ui/block.html", "ui/block.js", "shared.js", "assets/logo.png"],
-      "matches": [
-        "*://*.youtube.com/*",
-        "*://*.x.com/*",
-        "*://*.twitter.com/*",
-        "*://*.instagram.com/*",
-        "*://*.tiktok.com/*"
-      ]
+      "matches": ["<all_urls>"]
     }
   ],
   "background": {
@@ -35,6 +29,12 @@
     "128": "assets/logo.png"
   },
   "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/skip-world.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
     {
       "matches": ["<all_urls>"],
       "js": ["content/video.js"],

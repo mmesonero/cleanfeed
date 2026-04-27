@@ -4,6 +4,10 @@
     videoSpeedKeyInc: '+',
     videoSpeedKeyDec: '-',
     videoSpeedStep: 0.25,
+    skipEnabled: false,
+    skipForwardKey: 'ArrowRight',
+    skipBackwardKey: 'ArrowLeft',
+    skipSeconds: 10,
     subsOff: false,
     hideShorts: true,
     ytHideMetrics: false,
@@ -31,6 +35,7 @@
       settings: [
         { id: "subsOff", name: "Subtitles always off", description: "Auto-disables subtitles on any site" },
         { id: "videoSpeedEnabled", name: "Video speed keys", description: "Keyboard shortcuts to control playback speed", dashboardLink: true },
+        { id: "skipEnabled", name: "Skip seconds", description: "Jump forward / back with configurable keys", dashboardLink: true },
       ],
     },
     {

@@ -99,6 +99,12 @@ function escapeHtml(str) {
 }
 
 const STEP_PRESETS = [0.1, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+const SKIP_PRESETS = [3, 5, 10, 15, 20, 30, 60, 90];
+
+function displayKey(k) {
+  const map = { ArrowRight: '→', ArrowLeft: '←', ArrowUp: '↑', ArrowDown: '↓', ' ': 'Space', Escape: 'Esc', Enter: '↵' };
+  return map[k] || k;
+}
 
 const PLATFORM_ICONS = {
   youtube: `<div class="platform-icon-wrap" style="background:#FF0000">
@@ -118,46 +124,50 @@ const PLATFORM_ICONS = {
 function renderVideoSection(settings) {
   const speedEnabled = !!settings.videoSpeedEnabled;
   const subsEnabled  = !!settings.subsOff;
+  const skipEnabled  = !!settings.skipEnabled;
   const keyInc = settings.videoSpeedKeyInc || '+';
   const keyDec = settings.videoSpeedKeyDec || '-';
   const step   = settings.videoSpeedStep != null ? settings.videoSpeedStep : 0.25;
-  const activeCount = (subsEnabled ? 1 : 0) + (speedEnabled ? 1 : 0);
+  const skipFwd = settings.skipForwardKey  || 'ArrowRight';
+  const skipBwd = settings.skipBackwardKey || 'ArrowLeft';
+  const skipSecs = settings.skipSeconds != null ? settings.skipSeconds : 10;
+  const activeCount = (subsEnabled ? 1 : 0) + (speedEnabled ? 1 : 0) + (skipEnabled ? 1 : 0);
 
   const disabledAttr = speedEnabled ? '' : 'disabled';
   const speedCardClass = speedEnabled ? '' : ' platform-card-disabled';
   const stepRow = `
     <div class="step-control">
+      <span class="field-hint">step size</span>
       <div class="step-control-row">
         <button type="button" class="step-adj" data-step-dir="-1" data-current-step="${step}" ${disabledAttr}>−</button>
         <span class="step-display">${step}×</span>
         <button type="button" class="step-adj" data-step-dir="1" data-current-step="${step}" ${disabledAttr}>+</button>
       </div>
-      <span class="field-hint">step size</span>
     </div>
   `;
 
   const keyRowInc = `
     <div class="key-control">
+      <span class="field-hint">key</span>
       <button type="button" class="key-btn" data-key-id="videoSpeedKeyInc" ${disabledAttr}>${escapeHtml(keyInc)}</button>
-      <span class="field-hint">click to change</span>
     </div>
   `;
 
   const keyRowDec = `
     <div class="key-control">
+      <span class="field-hint">key</span>
       <button type="button" class="key-btn" data-key-id="videoSpeedKeyDec" ${disabledAttr}>${escapeHtml(keyDec)}</button>
-      <span class="field-hint">click to change</span>
     </div>
   `;
 
   const speedCard = `
     <article class="platform-card${speedCardClass}">
       <div class="platform-card-head">
-        <div class="platform-card-title">Speed keys</div>
+        <div class="platform-card-title">Speed Configuration</div>
       </div>
       <div class="setting-row">
         <div class="setting-copy">
-          <div class="setting-name">Speed up</div>
+          <div class="setting-name">Up</div>
           <div class="setting-desc">+${step}× per press</div>
         </div>
         ${stepRow}
@@ -165,7 +175,7 @@ function renderVideoSection(settings) {
       </div>
       <div class="setting-row">
         <div class="setting-copy">
-          <div class="setting-name">Slow down</div>
+          <div class="setting-name">Down</div>
           <div class="setting-desc">−${step}× per press</div>
         </div>
         ${stepRow}
@@ -174,13 +184,59 @@ function renderVideoSection(settings) {
     </article>
   `;
 
+  const skipDisabledAttr  = skipEnabled ? '' : 'disabled';
+  const skipCardClass     = skipEnabled ? '' : ' platform-card-disabled';
+  const skipCard = `
+    <article class="platform-card${skipCardClass}">
+      <div class="platform-card-head">
+        <div class="platform-card-title">Skip Configuration</div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy">
+          <div class="setting-name">Forward</div>
+          <div class="setting-desc">+${skipSecs}s per press</div>
+        </div>
+        <div class="step-control">
+          <span class="field-hint">seconds</span>
+          <div class="step-control-row">
+            <button type="button" class="step-adj" data-skip-dir="-1" data-current-skip="${skipSecs}" ${skipDisabledAttr}>−</button>
+            <span class="step-display">${skipSecs}s</span>
+            <button type="button" class="step-adj" data-skip-dir="1" data-current-skip="${skipSecs}" ${skipDisabledAttr}>+</button>
+          </div>
+        </div>
+        <div class="key-control">
+          <span class="field-hint">key</span>
+          <button type="button" class="key-btn" data-key-id="skipForwardKey" ${skipDisabledAttr}>${escapeHtml(displayKey(skipFwd))}</button>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-copy">
+          <div class="setting-name">Back</div>
+          <div class="setting-desc">−${skipSecs}s per press</div>
+        </div>
+        <div class="step-control">
+          <span class="field-hint">seconds</span>
+          <div class="step-control-row">
+            <button type="button" class="step-adj" data-skip-dir="-1" data-current-skip="${skipSecs}" ${skipDisabledAttr}>−</button>
+            <span class="step-display">${skipSecs}s</span>
+            <button type="button" class="step-adj" data-skip-dir="1" data-current-skip="${skipSecs}" ${skipDisabledAttr}>+</button>
+          </div>
+        </div>
+        <div class="key-control">
+          <span class="field-hint">key</span>
+          <button type="button" class="key-btn" data-key-id="skipBackwardKey" ${skipDisabledAttr}>${escapeHtml(displayKey(skipBwd))}</button>
+        </div>
+      </div>
+    </article>
+  `;
+
   document.getElementById('speed-section').innerHTML = `
     <div class="video-grid">
       <article class="platform-card">
         <div class="platform-card-head">
-          <img src="logo.png" alt="" />
+          <img src="../assets/logo.png" alt="" />
           <div class="platform-card-title">General</div>
-          <div class="platform-card-count">${activeCount}/2 on</div>
+          <div class="platform-card-count">${activeCount}/3 on</div>
         </div>
         <div class="setting-row">
           <div class="setting-copy">
@@ -204,8 +260,20 @@ function renderVideoSection(settings) {
             <span class="slider"></span>
           </label>
         </div>
+        <div class="setting-row">
+          <div class="setting-copy">
+            <div class="setting-name">Skip seconds</div>
+            <div class="setting-desc">Jump forward / back by configurable seconds</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="dash-skipEnabled" data-setting-id="skipEnabled"
+              ${skipEnabled ? 'checked' : ''} />
+            <span class="slider"></span>
+          </label>
+        </div>
       </article>
       ${speedCard}
+      ${skipCard}
     </div>
   `;
 }
@@ -235,7 +303,7 @@ function bindSpeedSection() {
     });
   });
 
-  // Preset cycling buttons
+  // Speed step cycling buttons
   document.querySelectorAll('.step-adj[data-step-dir]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const dir = parseInt(btn.dataset.stepDir, 10);
@@ -244,6 +312,18 @@ function bindSpeedSection() {
       const base = idx < 0 ? STEP_PRESETS.indexOf(0.25) : idx;
       const next = Math.max(0, Math.min(STEP_PRESETS.length - 1, base + dir));
       setSyncSetting('videoSpeedStep', STEP_PRESETS[next]).then(() => refreshDashboard());
+    });
+  });
+
+  // Skip seconds cycling buttons
+  document.querySelectorAll('.step-adj[data-skip-dir]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const dir = parseInt(btn.dataset.skipDir, 10);
+      const current = parseInt(btn.dataset.currentSkip, 10) || 10;
+      const idx = SKIP_PRESETS.findIndex((v) => v === current);
+      const base = idx < 0 ? SKIP_PRESETS.indexOf(10) : idx;
+      const next = Math.max(0, Math.min(SKIP_PRESETS.length - 1, base + dir));
+      setSyncSetting('skipSeconds', SKIP_PRESETS[next]).then(() => refreshDashboard());
     });
   });
 }
