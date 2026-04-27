@@ -10,7 +10,7 @@
   let subsOffManualEnabled = false;
   let lastUrl = location.href;
 
-  const PRESETS  = [1, 1.25, 1.5, 2, 3];
+  const PRESETS  = [1.25, 1.5];
   const GOLD     = '#d4b062';
   const GOLD_DIM = 'rgba(212,176,98,0.15)';
   const INK      = 'rgba(8,8,10,0.22)';
