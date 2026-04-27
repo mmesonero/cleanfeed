@@ -109,7 +109,7 @@ function renderGeneral(settings) {
 
   section.innerHTML = `
     <div class="general-head">
-      <div class="general-icon"><img src="logo.png" alt="" /></div>
+      <div class="general-icon"><img src="../assets/logo.png" alt="" /></div>
       <span class="general-name">General</span>
       <button class="dashboard-btn" id="open-dashboard">Full settings ↗</button>
     </div>

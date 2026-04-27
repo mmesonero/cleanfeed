@@ -6,11 +6,11 @@
   window.__cfVideoLoaded = true;
 
   const isYT = location.hostname.includes('youtube.com');
-  let cfg = { videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25 };
+  let cfg = { videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: false, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 };
   let subsOffManualEnabled = false;
   let lastUrl = location.href;
 
-  const PRESETS  = [1.25, 1.5];
+  const PRESETS  = [1, 2, 4, 6, 10];
   const GOLD     = '#d4b062';
   const GOLD_DIM = 'rgba(212,176,98,0.15)';
   const INK      = 'rgba(8,8,10,0.22)';
@@ -24,8 +24,18 @@
   // ── Build HUD ──────────────────────────────────────────────────────────────
 
   function buildHUD(video) {
+    // Remove any site-imposed cap on playbackRate (YT/Prime use defineProperty)
+    try {
+      const proto = Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'playbackRate');
+      Object.defineProperty(video, 'playbackRate', {
+        get: proto.get, set: proto.set, configurable: true, enumerable: true,
+      });
+    } catch (_) {}
+
     let savedRate   = video.playbackRate || 1;
     let settingRate = false;
+    let guardTimer  = null;
+    let enforceInterval = null;
     let dragDx = 0;
     let dragDy = 0;
 
@@ -151,7 +161,7 @@
 
     // Slider row — [−] track [+]
     const SLIDER_MIN = 0.25;
-    const SLIDER_MAX = 4;
+    const SLIDER_MAX = 10;
 
     const sliderRow = el('div', {
       style: css({ display: 'flex', alignItems: 'center', gap: '8px' }),
@@ -220,28 +230,28 @@
 
     // Presets row (below slider, like YouTube)
     const presetsRow = el('div', {
-      style: css({ display: 'flex', gap: '4px', alignItems: 'flex-start', marginTop: '2px' }),
+      style: css({ display: 'flex', gap: '4px', alignItems: 'stretch', marginTop: '2px' }),
     });
     const presetBtns = PRESETS.map(speed => {
-      const wrap2 = el('div', { style: css({ flex: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }) });
       const b = el('button', {
         style: css({
           all: 'unset',
           cursor: 'pointer',
-          width: '100%',
+          flex: '1',
           textAlign: 'center',
           font: `600 11px/1 ${MONO}`,
           color: 'rgba(255,255,255,0.7)',
-          padding: '5px 2px',
+          padding: '4px 2px',
           borderRadius: '5px',
           border: `1px solid transparent`,
           transition: 'color 0.12s, background 0.12s, border-color 0.12s',
+          minWidth: '0',
+          overflow: 'hidden',
         }),
       });
-      b.textContent = speed === 1 ? '1×' : `${speed}×`;
+      b.textContent = `${speed}×`;
       b.addEventListener('click', (e) => { e.stopPropagation(); applyRate(speed); });
-      wrap2.appendChild(b);
-      presetsRow.appendChild(wrap2);
+      presetsRow.appendChild(b);
       return { btn: b };
     });
 
@@ -273,6 +283,18 @@
       settingRate = true;
       video.playbackRate = rate;
       settingRate = false;
+      clearTimeout(guardTimer);
+      guardTimer = setTimeout(() => { guardTimer = null; }, 3000);
+      clearInterval(enforceInterval);
+      if (rate > 2) {
+        enforceInterval = setInterval(() => {
+          if (Math.abs(video.playbackRate - savedRate) > 0.01) {
+            settingRate = true;
+            video.playbackRate = savedRate;
+            settingRate = false;
+          }
+        }, 200);
+      }
       update();
     }
 
@@ -292,7 +314,7 @@
     }
 
     function tick() {
-      if (!document.contains(video)) { wrap.remove(); return; }
+      if (!document.contains(video)) { wrap.remove(); clearInterval(enforceInterval); return; }
       const fsRoot = getFullscreenRoot();
       const targetParent = fsRoot && (fsRoot === video || fsRoot.contains(video)) ? fsRoot : document.body;
       if (wrap.parentNode !== targetParent) targetParent.appendChild(wrap);
@@ -317,13 +339,16 @@
     // ── Sync with external speed changes (YouTube native controls) ────────────
     video.addEventListener('ratechange', () => {
       if (settingRate) { update(); return; }
+      if (guardTimer && Math.abs(video.playbackRate - savedRate) > 0.01) {
+        applyRate(savedRate); return;
+      }
       savedRate = video.playbackRate;
       update();
     });
 
     video.addEventListener('play', () => {
       if (Math.abs(video.playbackRate - savedRate) > 0.001) {
-        video.playbackRate = savedRate;
+        applyRate(savedRate);
       }
     });
 
@@ -373,7 +398,7 @@
   }
 
   function round(n) { return Math.round(n * 100) / 100; }
-  function clamp(n) { return Math.min(4, Math.max(0.25, n)); }
+  function clamp(n) { return Math.min(10, Math.max(0.25, n)); }
 
   // ── Speed setter ───────────────────────────────────────────────────────────
 
@@ -407,6 +432,15 @@
     e.preventDefault();
     setSpeed(v, clamp(round(v.playbackRate + (isInc ? cfg.videoSpeedStep : -cfg.videoSpeedStep))));
   }, { passive: false });
+
+  function syncSkipConfig() {
+    document.documentElement.dataset.cfSkip = JSON.stringify({
+      enabled: cfg.skipEnabled,
+      forwardKey: cfg.skipForwardKey,
+      backwardKey: cfg.skipBackwardKey,
+      seconds: cfg.skipSeconds,
+    });
+  }
 
   // ── Init videos ────────────────────────────────────────────────────────────
 
@@ -579,12 +613,17 @@
 
   // ── Storage ────────────────────────────────────────────────────────────────
 
-  chrome.storage.sync.get({ videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25 }, (s) => {
+  chrome.storage.sync.get({ videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: false, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 }, (s) => {
     cfg.videoSpeedEnabled  = s.videoSpeedEnabled;
     cfg.subsOff            = s.subsOff;
     cfg.videoSpeedKeyInc   = s.videoSpeedKeyInc;
     cfg.videoSpeedKeyDec   = s.videoSpeedKeyDec;
     cfg.videoSpeedStep     = s.videoSpeedStep;
+    cfg.skipEnabled        = s.skipEnabled;
+    cfg.skipForwardKey     = s.skipForwardKey;
+    cfg.skipBackwardKey    = s.skipBackwardKey;
+    cfg.skipSeconds        = s.skipSeconds;
+    syncSkipConfig();
     scanVideos();
     disableSubs();
   });
@@ -594,6 +633,11 @@
     if ('videoSpeedKeyInc'  in changes) cfg.videoSpeedKeyInc  = changes.videoSpeedKeyInc.newValue;
     if ('videoSpeedKeyDec'  in changes) cfg.videoSpeedKeyDec  = changes.videoSpeedKeyDec.newValue;
     if ('videoSpeedStep'    in changes) cfg.videoSpeedStep    = changes.videoSpeedStep.newValue;
+    if ('skipEnabled'       in changes) cfg.skipEnabled       = changes.skipEnabled.newValue;
+    if ('skipForwardKey'    in changes) cfg.skipForwardKey    = changes.skipForwardKey.newValue;
+    if ('skipBackwardKey'   in changes) cfg.skipBackwardKey   = changes.skipBackwardKey.newValue;
+    if ('skipSeconds'       in changes) cfg.skipSeconds       = changes.skipSeconds.newValue;
+    if ('skipEnabled' in changes || 'skipForwardKey' in changes || 'skipBackwardKey' in changes || 'skipSeconds' in changes) syncSkipConfig();
     if ('subsOff' in changes) {
       cfg.subsOff = changes.subsOff.newValue;
       if (cfg.subsOff) disableSubs();

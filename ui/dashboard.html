@@ -140,6 +140,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      min-height: 44px;
       padding: 11px 14px;
       border-bottom: 1px solid var(--border);
       background: var(--surface-soft);
@@ -240,6 +241,7 @@
       display: flex;
       align-items: center;
       gap: 14px;
+      height: 58px;
       padding: 10px 14px;
       border-top: 1px solid var(--border);
       transition: background 0.12s;
@@ -253,6 +255,9 @@
       font-size: 13.5px;
       font-weight: 600;
       letter-spacing: -0.1px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .setting-desc {
@@ -260,6 +265,9 @@
       font-size: 11.5px;
       color: var(--desc);
       line-height: 1.45;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     /* ── Toggle ── */
@@ -316,14 +324,14 @@
     .key-btn {
       background: var(--surface-soft);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 7px;
       color: var(--text);
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
-      min-width: 42px;
-      height: 34px;
-      padding: 0 10px;
+      min-width: 36px;
+      height: 26px;
+      padding: 0 8px;
       flex-shrink: 0;
       transition: border-color 0.15s, color 0.15s, background 0.15s;
       font-family: ui-monospace, "JetBrains Mono", monospace;
@@ -354,9 +362,9 @@
 
     .video-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      align-items: stretch;
+      align-items: start;
     }
 
     .step-control {
@@ -376,12 +384,12 @@
     .step-display {
       background: var(--surface-soft);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 7px;
       color: var(--gold);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
-      width: 52px;
-      height: 34px;
+      width: 46px;
+      height: 26px;
       display: grid;
       place-items: center;
       font-family: ui-monospace, "JetBrains Mono", monospace;
@@ -389,13 +397,13 @@
     }
 
     .step-adj {
-      width: 26px;
-      height: 34px;
+      width: 22px;
+      height: 26px;
       background: var(--surface-soft);
       border: 1px solid var(--border);
-      border-radius: 7px;
+      border-radius: 6px;
       color: var(--muted);
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       display: grid;
