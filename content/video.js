@@ -284,6 +284,7 @@
       settingRate = true;
       video.playbackRate = rate;
       settingRate = false;
+      console.log('[CF] applyRate', rate, '→ actual', video.playbackRate);
       clearTimeout(guardTimer);
       guardTimer = setTimeout(() => { guardTimer = null; }, 3000);
       // For speeds the site tends to cap, poll every 200ms and re-apply
@@ -340,6 +341,7 @@
 
     // ── Sync with external speed changes (YouTube native controls) ────────────
     video.addEventListener('ratechange', () => {
+      console.log('[CF] ratechange actual=', video.playbackRate, 'saved=', savedRate, 'settingRate=', settingRate, 'guard=', !!guardTimer);
       if (settingRate) { update(); return; }
       if (guardTimer && Math.abs(video.playbackRate - savedRate) > 0.01) {
         applyRate(savedRate); return;
