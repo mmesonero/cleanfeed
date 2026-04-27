@@ -26,6 +26,7 @@
   function buildHUD(video) {
     let savedRate   = video.playbackRate || 1;
     let settingRate = false;
+    let guardTimer  = null;
     let dragDx = 0;
     let dragDy = 0;
 
@@ -273,6 +274,9 @@
       settingRate = true;
       video.playbackRate = rate;
       settingRate = false;
+      // Guard window: fight back if the site resets our rate within 800ms
+      clearTimeout(guardTimer);
+      guardTimer = setTimeout(() => { guardTimer = null; }, 800);
       update();
     }
 
@@ -317,6 +321,9 @@
     // ── Sync with external speed changes (YouTube native controls) ────────────
     video.addEventListener('ratechange', () => {
       if (settingRate) { update(); return; }
+      if (guardTimer && Math.abs(video.playbackRate - savedRate) > 0.01) {
+        applyRate(savedRate); return;
+      }
       savedRate = video.playbackRate;
       update();
     });
