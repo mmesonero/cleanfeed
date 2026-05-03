@@ -6,7 +6,7 @@
   window.__cfVideoLoaded = true;
 
   const isYT = location.hostname.includes('youtube.com');
-  let cfg = { videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: false, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 };
+  let cfg = { videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: true, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 };
   let subsOffManualEnabled = false;
   let lastUrl = location.href;
 
@@ -322,15 +322,17 @@
       const tooSmall = r.width < MIN_W || r.height < MIN_H;
       const offscreen = r.bottom < 0 || r.top > window.innerHeight;
       if (tooSmall || offscreen || !cfg.videoSpeedEnabled) {
-        wrap.style.opacity = '0';
-        wrap.style.pointerEvents = 'none';
+        if (wrap.style.opacity !== '0')          wrap.style.opacity = '0';
+        if (wrap.style.pointerEvents !== 'none') wrap.style.pointerEvents = 'none';
       } else {
-        wrap.style.opacity = '1';
-        wrap.style.pointerEvents = 'auto';
+        if (wrap.style.opacity !== '1')          wrap.style.opacity = '1';
+        if (wrap.style.pointerEvents !== 'auto') wrap.style.pointerEvents = 'auto';
         const x = Math.max(0, Math.min(r.width  - 52, 10 + dragDx));
         const y = Math.max(0, Math.min(r.height - 34, 10 + dragDy));
-        wrap.style.top  = `${r.top  + y}px`;
-        wrap.style.left = `${r.left + x}px`;
+        const newTop  = `${r.top  + y}px`;
+        const newLeft = `${r.left + x}px`;
+        if (wrap.style.top  !== newTop)  wrap.style.top  = newTop;
+        if (wrap.style.left !== newLeft) wrap.style.left = newLeft;
       }
       requestAnimationFrame(tick);
     }
@@ -613,7 +615,7 @@
 
   // ── Storage ────────────────────────────────────────────────────────────────
 
-  chrome.storage.sync.get({ videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: false, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 }, (s) => {
+  chrome.storage.sync.get({ videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: true, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 }, (s) => {
     cfg.videoSpeedEnabled  = s.videoSpeedEnabled;
     cfg.subsOff            = s.subsOff;
     cfg.videoSpeedKeyInc   = s.videoSpeedKeyInc;
