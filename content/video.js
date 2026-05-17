@@ -20,6 +20,7 @@
   const MIN_H    = 160;
 
   const hudMap = new WeakMap();
+  const allHudVideos = new Set();
 
   // ── Build HUD ──────────────────────────────────────────────────────────────
 
@@ -314,14 +315,15 @@
     }
 
     function tick() {
-      if (!document.contains(video)) { wrap.remove(); clearInterval(enforceInterval); return; }
+      if (!document.contains(video)) { wrap.remove(); allHudVideos.delete(video); clearInterval(enforceInterval); return; }
       const fsRoot = getFullscreenRoot();
       const targetParent = fsRoot && (fsRoot === video || fsRoot.contains(video)) ? fsRoot : document.body;
       if (wrap.parentNode !== targetParent) targetParent.appendChild(wrap);
       const r = video.getBoundingClientRect();
       const tooSmall = r.width < MIN_W || r.height < MIN_H;
       const offscreen = r.bottom < 0 || r.top > window.innerHeight;
-      if (tooSmall || offscreen || !cfg.videoSpeedEnabled) {
+      const notActive = allHudVideos.size > 1 && video !== activeVideo();
+      if (tooSmall || offscreen || !cfg.videoSpeedEnabled || notActive) {
         if (wrap.style.opacity !== '0')          wrap.style.opacity = '0';
         if (wrap.style.pointerEvents !== 'none') wrap.style.pointerEvents = 'none';
       } else {
@@ -449,6 +451,7 @@
   function initVideo(v) {
     if (hudMap.has(v)) return;
     buildHUD(v);
+    allHudVideos.add(v);
     watchTracks(v);
     if (cfg.subsOff) disableNativeTracks(v);
   }
