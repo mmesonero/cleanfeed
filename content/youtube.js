@@ -39,29 +39,21 @@
   function removeVideoRecommendations() {
     if (!cfg.ytRemoveRecommendations) return;
 
-    // Hide secondary results (right sidebar recommendations when watching)
-    document.querySelectorAll('ytd-watch-next-secondary-results-renderer').forEach((el) => {
-      el.style.display = 'none';
-    });
+    const REC_SELECTORS = [
+      'ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer',
+      'ytd-watch-next-secondary-results-renderer ytd-compact-autoplay-renderer',
+      'ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer',
+      'ytd-watch-next-secondary-results-renderer ytd-compact-playlist-renderer',
+      'ytd-watch-next-secondary-results-renderer ytd-shelf-renderer',
+      'ytd-watch-next-secondary-results-renderer ytd-item-section-renderer',
+      'ytd-endscreen-renderer',
+      '.ytp-endscreen-container',
+    ];
 
-    // Hide watch next results
-    document.querySelectorAll('ytd-watch-next-results').forEach((el) => {
-      el.style.display = 'none';
-    });
-
-    // Hide secondary results
-    document.querySelectorAll('ytd-secondary-results').forEach((el) => {
-      el.style.display = 'none';
-    });
-
-    // Hide endscreen (video finished recommendations)
-    document.querySelectorAll('ytd-endscreen-renderer').forEach((el) => {
-      el.style.display = 'none';
-    });
-
-    // Hide endscreen container
-    document.querySelectorAll('.ytp-endscreen-container').forEach((el) => {
-      el.style.display = 'none';
+    REC_SELECTORS.forEach((sel) => {
+      document.querySelectorAll(sel).forEach((el) => {
+        el.style.display = 'none';
+      });
     });
   }
 
