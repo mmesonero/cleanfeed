@@ -321,7 +321,9 @@
       const r = video.getBoundingClientRect();
       const tooSmall = r.width < MIN_W || r.height < MIN_H;
       const offscreen = r.bottom < 0 || r.top > window.innerHeight;
-      if (tooSmall || offscreen || !cfg.videoSpeedEnabled) {
+      // Decorative/background videos: muted + no native controls + (autoplay or loop)
+      const isBackground = video.muted && !video.controls && (video.autoplay || video.loop);
+      if (tooSmall || offscreen || !cfg.videoSpeedEnabled || isBackground) {
         wrap.style.opacity = '0';
         wrap.style.pointerEvents = 'none';
       } else {
