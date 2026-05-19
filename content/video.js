@@ -6,7 +6,7 @@
   window.__cfVideoLoaded = true;
 
   const isYT = location.hostname.includes('youtube.com');
-  let cfg = { videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: false, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 };
+  let cfg = { videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: true, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 };
   let subsOffManualEnabled = false;
   let lastUrl = location.href;
 
@@ -20,6 +20,7 @@
   const MIN_H    = 160;
 
   const hudMap = new WeakMap();
+  const allHudVideos = new Set();
 
   // ── Build HUD ──────────────────────────────────────────────────────────────
 
@@ -314,7 +315,7 @@
     }
 
     function tick() {
-      if (!document.contains(video)) { wrap.remove(); clearInterval(enforceInterval); return; }
+      if (!document.contains(video)) { wrap.remove(); allHudVideos.delete(video); clearInterval(enforceInterval); return; }
       const fsRoot = getFullscreenRoot();
       const targetParent = fsRoot && (fsRoot === video || fsRoot.contains(video)) ? fsRoot : document.body;
       if (wrap.parentNode !== targetParent) targetParent.appendChild(wrap);
@@ -326,18 +327,22 @@
       // Video covered by a modal, overlay, or any other element on top
       const cx = r.left + r.width / 2;
       const cy = r.top + r.height / 2;
-      const top = document.elementFromPoint(cx, cy);
-      const isObscured = top !== null && top !== video && !video.contains(top);
-      if (tooSmall || offscreen || !cfg.videoSpeedEnabled || isBackground || isObscured) {
-        wrap.style.opacity = '0';
-        wrap.style.pointerEvents = 'none';
+      const topEl = document.elementFromPoint(cx, cy);
+      const isObscured = topEl !== null && topEl !== video && !video.contains(topEl);
+      // Multiple videos on page: only show HUD for the active one
+      const notActive = allHudVideos.size > 1 && video !== activeVideo();
+      if (tooSmall || offscreen || !cfg.videoSpeedEnabled || isBackground || isObscured || notActive) {
+        if (wrap.style.opacity !== '0')          wrap.style.opacity = '0';
+        if (wrap.style.pointerEvents !== 'none') wrap.style.pointerEvents = 'none';
       } else {
-        wrap.style.opacity = '1';
-        wrap.style.pointerEvents = 'auto';
+        if (wrap.style.opacity !== '1')          wrap.style.opacity = '1';
+        if (wrap.style.pointerEvents !== 'auto') wrap.style.pointerEvents = 'auto';
         const x = Math.max(0, Math.min(r.width  - 52, 10 + dragDx));
         const y = Math.max(0, Math.min(r.height - 34, 10 + dragDy));
-        wrap.style.top  = `${r.top  + y}px`;
-        wrap.style.left = `${r.left + x}px`;
+        const newTop  = `${r.top  + y}px`;
+        const newLeft = `${r.left + x}px`;
+        if (wrap.style.top  !== newTop)  wrap.style.top  = newTop;
+        if (wrap.style.left !== newLeft) wrap.style.left = newLeft;
       }
       requestAnimationFrame(tick);
     }
@@ -454,6 +459,7 @@
   function initVideo(v) {
     if (hudMap.has(v)) return;
     buildHUD(v);
+    allHudVideos.add(v);
     watchTracks(v);
     if (cfg.subsOff) disableNativeTracks(v);
   }
@@ -620,7 +626,7 @@
 
   // ── Storage ────────────────────────────────────────────────────────────────
 
-  chrome.storage.sync.get({ videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: false, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 }, (s) => {
+  chrome.storage.sync.get({ videoSpeedEnabled: true, subsOff: false, videoSpeedKeyInc: '+', videoSpeedKeyDec: '-', videoSpeedStep: 0.25, skipEnabled: true, skipForwardKey: 'ArrowRight', skipBackwardKey: 'ArrowLeft', skipSeconds: 10 }, (s) => {
     cfg.videoSpeedEnabled  = s.videoSpeedEnabled;
     cfg.subsOff            = s.subsOff;
     cfg.videoSpeedKeyInc   = s.videoSpeedKeyInc;

@@ -4,7 +4,7 @@
     videoSpeedKeyInc: '+',
     videoSpeedKeyDec: '-',
     videoSpeedStep: 0.25,
-    skipEnabled: false,
+    skipEnabled: true,
     skipForwardKey: 'ArrowRight',
     skipBackwardKey: 'ArrowLeft',
     skipSeconds: 10,
