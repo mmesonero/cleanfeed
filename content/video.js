@@ -323,7 +323,12 @@
       const offscreen = r.bottom < 0 || r.top > window.innerHeight;
       // Decorative/background videos: muted + no native controls + (autoplay or loop)
       const isBackground = video.muted && !video.controls && (video.autoplay || video.loop);
-      if (tooSmall || offscreen || !cfg.videoSpeedEnabled || isBackground) {
+      // Video covered by a modal, overlay, or any other element on top
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const top = document.elementFromPoint(cx, cy);
+      const isObscured = top !== null && top !== video && !video.contains(top);
+      if (tooSmall || offscreen || !cfg.videoSpeedEnabled || isBackground || isObscured) {
         wrap.style.opacity = '0';
         wrap.style.pointerEvents = 'none';
       } else {
