@@ -322,8 +322,16 @@
       const r = video.getBoundingClientRect();
       const tooSmall = r.width < MIN_W || r.height < MIN_H;
       const offscreen = r.bottom < 0 || r.top > window.innerHeight;
+      // Decorative/background videos: muted + no native controls + (autoplay or loop)
+      const isBackground = video.muted && !video.controls && (video.autoplay || video.loop);
+      // Video covered by a modal, overlay, or any other element on top
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const topEl = document.elementFromPoint(cx, cy);
+      const isObscured = topEl !== null && topEl !== video && !video.contains(topEl);
+      // Multiple videos on page: only show HUD for the active one
       const notActive = allHudVideos.size > 1 && video !== activeVideo();
-      if (tooSmall || offscreen || !cfg.videoSpeedEnabled || notActive) {
+      if (tooSmall || offscreen || !cfg.videoSpeedEnabled || isBackground || isObscured || notActive) {
         if (wrap.style.opacity !== '0')          wrap.style.opacity = '0';
         if (wrap.style.pointerEvents !== 'none') wrap.style.pointerEvents = 'none';
       } else {

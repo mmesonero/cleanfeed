@@ -55,11 +55,14 @@ html.cf-shorts ytd-grid-video-renderer:has(a[href*="/shorts/"]) {
   display: none !important;
 }
 
-/* Hide recommendations when watching videos */
-html.cf-yt-remove-recommendations ytd-watch-next-secondary-results-renderer,
-html.cf-yt-remove-recommendations ytd-watch-next-results,
-html.cf-yt-remove-recommendations ytd-secondary-results,
-html.cf-yt-remove-recommendations #secondary,
+/* Hide recommendation items inside the sidebar, but NOT the container itself
+   so that #persistent-panel-container (transcript/chapters) stays visible */
+html.cf-yt-remove-recommendations ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer,
+html.cf-yt-remove-recommendations ytd-watch-next-secondary-results-renderer ytd-compact-autoplay-renderer,
+html.cf-yt-remove-recommendations ytd-watch-next-secondary-results-renderer ytd-compact-radio-renderer,
+html.cf-yt-remove-recommendations ytd-watch-next-secondary-results-renderer ytd-compact-playlist-renderer,
+html.cf-yt-remove-recommendations ytd-watch-next-secondary-results-renderer ytd-shelf-renderer,
+html.cf-yt-remove-recommendations ytd-watch-next-secondary-results-renderer ytd-item-section-renderer,
 html.cf-yt-remove-recommendations ytd-endscreen-renderer,
 html.cf-yt-remove-recommendations .ytp-endscreen-container {
   display: none !important;
